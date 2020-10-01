@@ -1,0 +1,36 @@
+{% extends 'layouts/main.html' %}
+
+{% block body %}
+
+    <h1>Products:</h1>
+
+{#    <div>#}
+{#        <form method="post" action="{{ url_for('api_blueprint.add_review', asin=product.asin) }}">#}
+{#            {{ form.hidden_tag() }}#}
+{##}
+{#            <div class="form-group">#}
+{#                {{ form.submit() }}#}
+{#            </div>#}
+{#        </form>#}
+{#    </div>#}
+
+    <table>
+        <thead>
+            <tr>
+                <th></th>
+                <th>asin</th>
+                <th>title</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for product in products %}
+                <tr>
+                    <td>{{ product.id }}</td>
+                    <td>{{ product.asin }}</td>
+                    <td>{{ product.title }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+{% endblock %}
