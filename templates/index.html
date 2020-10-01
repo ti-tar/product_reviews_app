@@ -2,24 +2,15 @@
 
 {% block body %}
 
-    <h1>Products:</h1>
-
-{#    <div>#}
-{#        <form method="post" action="{{ url_for('api_blueprint.add_review', asin=product.asin) }}">#}
-{#            {{ form.hidden_tag() }}#}
-{##}
-{#            <div class="form-group">#}
-{#                {{ form.submit() }}#}
-{#            </div>#}
-{#        </form>#}
-{#    </div>#}
+    <h2>Products:</h2>
 
     <table>
         <thead>
             <tr>
-                <th></th>
+                <th>id</th>
                 <th>asin</th>
                 <th>title</th>
+                <th>actions</th>
             </tr>
         </thead>
         <tbody>
@@ -28,6 +19,10 @@
                     <td>{{ product.id }}</td>
                     <td>{{ product.asin }}</td>
                     <td>{{ product.title }}</td>
+                    <td>
+                        <a href="{{ url_for('main_blueprint.main_add_review', asin=product.asin) }}">Add Review</a>
+                        <a href="{{ url_for('api_blueprint.review_add', asin=product.asin) }}">API JSON</a>
+                    </td>
                 </tr>
             {% endfor %}
         </tbody>

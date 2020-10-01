@@ -9,3 +9,12 @@ class Product(db.Model, BaseModel):
     title = db.Column(db.Text)
 
     reviews = db.relationship('Review', backref='product', lazy=False, cascade='all,delete')
+
+    @property
+    def serialize(self):
+        """Return object data in easily serializable format"""
+        return {
+            'id': self.id,
+            'asin': self.asin,
+            'title': self.title
+        }

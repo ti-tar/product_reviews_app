@@ -1,3 +1,4 @@
+{% from "helpers/_formhelpers.html" import render_field %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,6 +6,11 @@
     <title>Product Reviews</title>
 </head>
 <body>
+
+    <header>
+        <a href="{{ url_for('main_blueprint.main_index') }}">Marakas</a>
+    </header>
+
     {% block body%}{% endblock %}
 </body>
 </html>

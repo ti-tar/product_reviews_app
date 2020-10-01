@@ -1,7 +1,8 @@
 from flask import render_template, request
 
 from app import main_blueprint
-from forms.file_form import FileForm
+from forms import ReviewForm
+from libs.helpers import get_object_or_404
 from models import Product
 
 '''
@@ -13,19 +14,18 @@ from models import Product
 
 
 @main_blueprint.route("/")
-def main():
+def main_index():
     return render_template(
         'index.html',
-        products=Product.query.all(),
-        form=FileForm(request.form)
+        products=Product.query.all()
     )
 
 
-@main_blueprint.route("/parse/products")
-def parse_products():
-    return 'parse_products'
-
-
-@main_blueprint.route("/parse/reviews")
-def parse_reviews():
-    return 'parse_reviews'
+@main_blueprint.route("/products/<string:asin>/review/add")
+def main_add_review(asin=None):
+    product = get_object_or_404(Product, asin == Product.asin)
+    return render_template(
+        'review_add.html',
+        product=product,
+        form=ReviewForm(request.form)
+    )

@@ -2,35 +2,35 @@
 
 {% block body %}
 
-<h1>Add Review</h1>
+    <h2>Product:</h2>
+    <p>
+        {{ product.asin }}
+        <br/>
+        {{ product.title }}
+    </p>
 
-{#    <div>#}
-{#        <form method="post" action="{{ url_for('api_blueprint.review_add', asin=product.asin) }}">#}
-{#            {{ form.hidden_tag() }}#}
-{##}
-{#            <div class="form-group">#}
-{#                {{ form.submit() }}#}
-{#            </div>#}
-{#        </form>#}
-{#    </div>#}
+    <h2>Add Review:</h2>
+    <div>
+        <form method="post" action="{{ url_for('api_blueprint.review_add', asin=product.asin) }}">
+            {{ form.hidden_tag() }}
 
-    <table>
-        <thead>
-            <tr>
-                <th></th>
-                <th>asin</th>
-                <th>title</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for product in products %}
-                <tr>
-                    <td>{{ product.id }}</td>
-                    <td>{{ product.asin }}</td>
-                    <td>{{ product.title }}</td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+            {{ render_field(form.title) }}
+            {{ render_field(form.review) }}
+
+            <div class="form-group">
+                {{ form.submit() }}
+            </div>
+        </form>
+    </div>
+
+
+    <h2>Reviews:</h2>
+    {% for review in product.reviews %}
+        <p>
+            <div>{{ review.title }}</div>
+            <div>{{ review.review }}</div>
+        </p>
+        <hr>
+    {% endfor %}
 
 {% endblock %}

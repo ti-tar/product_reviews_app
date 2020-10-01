@@ -1,8 +1,9 @@
-from flask import jsonify
+from flask import jsonify, request
 from sqlalchemy import desc
 from flask_paginate import get_page_args
 
-from app import api_blueprint
+from app import api_blueprint, db
+from forms import ReviewForm
 from libs.helpers import get_object_or_404
 from models import Review, Product
 
@@ -15,7 +16,7 @@ from models import Review, Product
 
 
 @api_blueprint.route("/products/<string:asin>", methods=['GET'])
-def api(asin=None):
+def api_product(asin=None):
     product = get_object_or_404(Product, asin == Product.asin)
     page, per_page, offset = get_page_args(
         page_parameter='page', per_page_parameter='per_page'
@@ -23,8 +24,8 @@ def api(asin=None):
     total = Review.query.count()
     reviews = Review.query.order_by(desc(Review.id)).offset(offset).limit(per_page).all()
     return jsonify(
-        product=product,
-        reviews=reviews,
+        product=product.serialize,
+        reviews=[review.serialize for review in reviews] if reviews else [],
         page=page,
         per_page=per_page,
         total=total
@@ -38,4 +39,28 @@ def api(asin=None):
 
 @api_blueprint.route("/products/<string:asin>", methods=['PUT', 'POST'])
 def review_add(asin=None):
-    return jsonify({})
+    if request.method == 'POST':
+
+        review_form = ReviewForm(request.form)
+
+        if review_form.validate():
+            product = Product.query.filter(Product.asin==asin).first()
+            if not product:
+                return jsonify(status='error', errors=[{'message': 'No such product asin found'}])
+
+            title = request.form.get('title')
+            review = request.form.get('review')
+
+            new_review = Review()
+            new_review.title = title
+            new_review.review = review
+
+            product.reviews.append(new_review)
+            db.session.add(new_review)
+            db.session.commit()
+
+            return jsonify(status='success')
+
+        print(review_form.errors)
+
+    return jsonify(status='error', errors=[''])

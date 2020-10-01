@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField
+from wtforms import StringField, TextAreaField, SubmitField
 from wtforms.validators import DataRequired
 
 
@@ -10,7 +10,7 @@ class ReviewForm(FlaskForm):
         DataRequired('Please fill this field.'),
     ])
 
-    review = StringField('review', validators=[
+    review = TextAreaField('review', validators=[
         DataRequired('Please fill this field.'),
     ])
 

@@ -9,3 +9,12 @@ class Review(db.Model, BaseModel):
     review = db.Column(db.Text)
 
     product_id = db.Column(db.Integer, db.ForeignKey('products.id'), nullable=True)
+
+    @property
+    def serialize(self):
+        """Return object data in easily serializable format"""
+        return {
+            'id': self.id,
+            'title': self.title,
+            'review': self.review,
+        }
