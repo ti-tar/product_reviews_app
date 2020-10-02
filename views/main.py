@@ -5,13 +5,6 @@ from forms import ReviewForm
 from libs.helpers import get_object_or_404
 from models import Product
 
-'''
-Распарсить два 2 .csv файла (ссылки прилагаются) (Products, Reviews), 
-данные сохранять в базу (использовать Postgres, соотношения one-to-many 
-или many-to-many на выбор). Парсинг и сохранение в базу можно реализовать 
-консольной командой.
-'''
-
 
 @main_blueprint.route("/")
 def main_index():

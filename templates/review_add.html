@@ -11,7 +11,8 @@
 
     <h2>Add Review:</h2>
     <div>
-        <form method="post" action="{{ url_for('api_blueprint.review_add', asin=product.asin) }}">
+        <form method="post" action="{{ url_for('api_blueprint.review_add', asin=product.asin) }}"
+              onsubmit="return onSubmitReview(event)">
             {{ form.hidden_tag() }}
 
             {{ render_field(form.title) }}
@@ -27,10 +28,51 @@
     <h2>Reviews:</h2>
     {% for review in product.reviews %}
         <p>
-            <div>{{ review.title }}</div>
-            <div>{{ review.review }}</div>
+            <span>{{ review.title }}</span>
+            <br />
+            <span>{{ review.review }}</span>
         </p>
         <hr>
     {% endfor %}
+
+{% endblock %}
+
+{% block js %}
+    <script>
+
+        function createNewReview() {
+            return fetch("{{ url_for('api_blueprint.review_add', asin=product.asin) }}", {
+              method: 'PUT',
+              headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+               },
+              body: JSON.stringify({
+                title: document.getElementById('title').value,
+                review: document.getElementById('review').value,
+                csrf_token: document.getElementById('csrf_token').value
+              })
+            }).then(response => response.json())
+        }
+
+        function onSubmitReview(e) {
+            e.preventDefault()
+
+            createNewReview()
+               .then((response) => {
+                   if (response.status === 'success') {
+                       alert('Review added')
+                       window.location.reload(false);
+                   }
+                   if (response.status === 'error') {
+                       alert(response.errors.map( (err) => Object.keys(err).map((i)=> i+ ': ' + err[i].join(', ')).join(', ') ).join('<br />'))
+                   }
+                })
+               .catch(error => console.error(error));
+
+            return false
+        }
+
+    </script>
 
 {% endblock %}

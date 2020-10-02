@@ -17,6 +17,8 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
 
+app.config['PER_PAGE'] = 5
+
 db = SQLAlchemy(app)
 
 migrate = Migrate(app, db)

@@ -3,16 +3,8 @@ from sqlalchemy import desc
 from flask_paginate import get_page_args
 
 from app import api_blueprint, db
-from forms import ReviewForm
 from libs.helpers import get_object_or_404
 from models import Review, Product
-
-'''
-На основе Flask создать API endpoint (GET), который будет возвращать данные в формате json 
-следующего содержания:
-По id товара отдавать информацию по этому товару (ASIN, Title) и Reviews этого товара с пагинацией.
-Желательно создать кеширование для GET endpoint. 
-'''
 
 
 @api_blueprint.route("/products/<string:asin>", methods=['GET'])
@@ -32,35 +24,31 @@ def api_product(asin=None):
     )
 
 
-'''
-Создать второй API endpoint (PUT), который будет писать в базу данных новый Review для товара (по id).
-'''
-
-
-@api_blueprint.route("/products/<string:asin>", methods=['PUT', 'POST'])
+@api_blueprint.route("/products/<string:asin>", methods=['PUT'])
 def review_add(asin=None):
-    if request.method == 'POST':
+    if request.method == 'PUT':
 
-        review_form = ReviewForm(request.form)
+        product = Product.query.filter(Product.asin == asin).first()
+        if not product:
+            return jsonify(status='error', errors=[{'message': ['No such product asin found']}])
 
-        if review_form.validate():
-            product = Product.query.filter(Product.asin==asin).first()
-            if not product:
-                return jsonify(status='error', errors=[{'message': 'No such product asin found'}])
+        try:
+            title = request.json.get('title')
+            review = request.json.get('review')
+        except AttributeError:
+            return jsonify(status='error', errors=[{'validation': ['Check out your JSON and headers']}])
 
-            title = request.form.get('title')
-            review = request.form.get('review')
+        if not title or not review:
+            return jsonify(status='error', errors=[{'validation': ['Fill title & review fields']}])
 
-            new_review = Review()
-            new_review.title = title
-            new_review.review = review
+        new_review = Review()
+        new_review.title = title
+        new_review.review = review
 
-            product.reviews.append(new_review)
-            db.session.add(new_review)
-            db.session.commit()
+        product.reviews.append(new_review)
+        db.session.add(new_review)
+        db.session.commit()
 
-            return jsonify(status='success')
+        return jsonify(status='success')
 
-        print(review_form.errors)
-
-    return jsonify(status='error', errors=[''])
+    return jsonify(status='error', errors=[{'message': 'Wrong request format'}])
