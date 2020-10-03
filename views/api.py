@@ -7,9 +7,9 @@ from libs.helpers import get_object_or_404
 from models import Review, Product
 
 
-@api_blueprint.route("/products/<string:asin>", methods=['GET'])
-def api_product(asin=None):
-    product = get_object_or_404(Product, asin == Product.asin)
+@api_blueprint.route("/products/<int:product_id>", methods=['GET'])
+def api_product(product_id=None):
+    product = get_object_or_404(Product, product_id == Product.id)
     page, per_page, offset = get_page_args(
         page_parameter='page', per_page_parameter='per_page'
     )

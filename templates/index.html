@@ -21,7 +21,7 @@
                     <td>{{ product.title }}</td>
                     <td>
                         <a href="{{ url_for('main_blueprint.main_add_review', asin=product.asin) }}">Add Review</a>
-                        <a href="{{ url_for('api_blueprint.review_add', asin=product.asin) }}">API JSON</a>
+                        <a href="{{ url_for('api_blueprint.api_product', product_id=product.id) }}">API JSON</a>
                     </td>
                 </tr>
             {% endfor %}
