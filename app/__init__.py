@@ -7,6 +7,7 @@ from dotenv import load_dotenv
 from flask import Flask, Blueprint
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
+from flask_caching import Cache
 
 # get env vars from `.env` file
 if os.path.isfile('.env'):
@@ -32,10 +33,17 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
 
+app.config['CACHE_TYPE'] = 'redis'
+app.config['CACHE_DEFAULT_TIMEOUT'] = 300
+
+app.config['CACHE_KEY_PREFIX'] = os.getenv('CACHE_KEY_PREFIX')
+app.config['CACHE_REDIS_URL'] = os.getenv('CACHE_REDIS_URL')
+
 app.config['PER_PAGE'] = 5
 
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
+cache = Cache(app)
 
 
 # CLI PARSE FILES

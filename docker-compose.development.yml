@@ -9,9 +9,17 @@ services:
       POSTGRES_USER: user
       POSTGRES_PASSWORD: password
       POSTGRES_DB: marakas
+  adminer:
+    container_name: marakas-adminer
+    image: adminer:4.7.7
+    depends_on:
+      - db
+    ports:
+      - 8080:8080
   redis:
     container_name: marakas-redis
     image: redis:alpine
+#    command: redis-server --requirepass password
     command: redis-server
     ports:
       - 6370:6379

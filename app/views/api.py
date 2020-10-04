@@ -2,26 +2,34 @@ from flask import jsonify, request
 from sqlalchemy import desc
 from flask_paginate import get_page_args
 
-from app import api_blueprint, db
+from app import api_blueprint, db, cache
 from app.libs.helpers import get_object_or_404
 from app.models import Review, Product
 
 
 @api_blueprint.route("/products/<int:product_id>", methods=['GET'])
 def api_product(product_id=None):
-    product = get_object_or_404(Product, product_id == Product.id)
     page, per_page, offset = get_page_args(
         page_parameter='page', per_page_parameter='per_page'
     )
-    total = Review.query.count()
-    reviews = Review.query.order_by(desc(Review.id)).offset(offset).limit(per_page).all()
-    return jsonify(
-        product=product.serialize,
-        reviews=[review.serialize for review in reviews] if reviews else [],
-        page=page,
-        per_page=per_page,
-        total=total
-    )
+    cache_key = f"products:id:{product_id},page:{page},per_page:{per_page}"
+    cached_response = cache.get(cache_key)
+    if not cached_response:
+        product = get_object_or_404(Product, product_id == Product.id)
+        total = Review.query.count()
+        reviews = Review.query.order_by(desc(Review.id)).offset(offset).limit(per_page).all()
+
+        cached_response = jsonify(
+            product=product.serialize,
+            reviews=[review.serialize for review in reviews] if reviews else [],
+            page=page,
+            per_page=per_page,
+            total=total
+        )
+
+        cache.set(cache_key, cached_response)
+
+    return cached_response
 
 
 @api_blueprint.route("/products/<string:asin>", methods=['PUT'])
@@ -48,6 +56,9 @@ def review_add(asin=None):
         product.reviews.append(new_review)
         db.session.add(new_review)
         db.session.commit()
+
+        # TODO :)
+        cache.clear()
 
         return jsonify(status='success')
 
