@@ -1,9 +1,9 @@
 from flask import render_template, request
 
 from app import main_blueprint
-from forms import ReviewForm
-from libs.helpers import get_object_or_404
-from models import Product
+from app.forms import ReviewForm
+from app.libs.helpers import get_object_or_404
+from app.models import Product
 
 
 @main_blueprint.route("/")

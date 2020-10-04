@@ -10,9 +10,15 @@ $ flask db migrate
 $ flask db upgrade
 ```
 
+## Parse files
+Put the `products.csv` and `reviews.csv` files to folder `files/..`. 
+```
+$ flask parse
+```
+
 ## Run Dev
 ```
-FLASK_ENV=development flask run --host=127.0.0.1 --port=4000
+$ FLASK_APP=wsgi:app ASK_ENV=devopment flask run --host=127.0.0.1 --port=4000
 ```
 
 ## API

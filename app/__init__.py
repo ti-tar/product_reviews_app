@@ -1,9 +1,24 @@
+import logging
 import os
+import sys
+from pathlib import Path
 
+from dotenv import load_dotenv
 from flask import Flask, Blueprint
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 
+# get env vars from `.env` file
+if os.path.isfile('.env'):
+    print('Environment vars is loading. file: `.env`')
+    filepath = os.path.join(str(Path().cwd()), '.env')
+
+    if load_dotenv(dotenv_path=filepath, override=True):
+        print('ENV `.env` loaded')
+    else:
+        sys.exit('Error occurred during loading env file.')
+
+# init app
 app = Flask(__name__)
 
 host = os.getenv('DB_HOST')
@@ -20,16 +35,25 @@ app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
 app.config['PER_PAGE'] = 5
 
 db = SQLAlchemy(app)
-
 migrate = Migrate(app, db)
 
+
+# CLI PARSE FILES
+@app.cli.command("parse")
+def parse():
+    from cli.parse import Parse
+    p = Parse()
+    p.run()
+
+
+# LOGGER
+logging.basicConfig(stream=sys.stdout, level=logging.DEBUG, format="%(asctime)s | %(message)s")
+
+# blueprints for views
 main_blueprint = Blueprint('main_blueprint', __name__, url_prefix='/')
 api_blueprint = Blueprint('api_blueprint', __name__, url_prefix='/api')
 
-import views
+from . import views
 
 app.register_blueprint(main_blueprint)
 app.register_blueprint(api_blueprint)
-
-if __name__ == '__main__':
-    app.run()

@@ -3,8 +3,8 @@ from sqlalchemy import desc
 from flask_paginate import get_page_args
 
 from app import api_blueprint, db
-from libs.helpers import get_object_or_404
-from models import Review, Product
+from app.libs.helpers import get_object_or_404
+from app.models import Review, Product
 
 
 @api_blueprint.route("/products/<int:product_id>", methods=['GET'])
