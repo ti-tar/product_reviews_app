@@ -17,7 +17,7 @@ def api_product(product_id=None):
     if not cached_response:
         product = get_object_or_404(Product, product_id == Product.id)
         total = Review.query.count()
-        reviews = Review.query.order_by(desc(Review.id)).offset(offset).limit(per_page).all()
+        reviews = Review.query.filter(Review.product_id == product_id).order_by(desc(Review.id)).offset(offset).limit(per_page).all()
 
         cached_response = jsonify(
             product=product.serialize,

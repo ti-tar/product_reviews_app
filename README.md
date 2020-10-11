@@ -22,8 +22,8 @@ $ FLASK_APP=wsgi:app ASK_ENV=devopment flask run --host=127.0.0.1 --port=4000
 ## API
 Get product info
 ```
-/api/products/qwerty1234
-/api/products/qwerty1234?page=2
+/api/products/1234
+/api/products/1234?page=2
 ```
-`qwerty1234` - asin 
+`1234` - product id
 `page=2` - second reviews' page
